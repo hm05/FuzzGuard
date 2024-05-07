@@ -9,63 +9,80 @@ def main():
     # Create ArgumentParser object
     parser = argparse.ArgumentParser(description='This is a simple VAPT tool developed and managed by Harsh and Niral.')
 
+    # Add subparsers for each method
+    subparsers = parser.add_subparsers(dest='method', help='Specify service')
+
+    # HTTP subparser
+    http_parser = subparsers.add_parser('http', help='Specify service as HTTP')
+    http_parser.add_argument('-u', '--user',required=False, type=str, help='Username')
+    http_parser.add_argument('-U', '--userfile', type=argparse.FileType('r'), help='User file')
+    http_parser.add_argument('-P', '--passwordfile', type=argparse.FileType('r'), help='Password file')
+    http_parser.add_argument('-userlabel', type=str, help='User label for form')
+    http_parser.add_argument('-passlabel', type=str, help='Password label for form')
+    http_parser.add_argument('-e', '--error', type=str, help='Error message for invalid login attempt')
+    
+    # FTP subparser
+    ftp_parser = subparsers.add_parser('ftp', help='Specify service as FTP')
+
+    # Add FTP parameters here if needed
+
+    # SSH subparser
+    ssh_parser = subparsers.add_parser('ssh', help='Specify service as SSH')
+    # Add SSH parameters here if needed
+
+    # SMB subparser
+    smb_parser = subparsers.add_parser('smb', help='Specify service as SMB')
+    # Add SMB parameters here if needed
+
+    # MySQL subparser
+    mysql_parser = subparsers.add_parser('mysql', help='Specify service as MySQL')
+    # Add MySQL parameters here if needed
+
+    # Directory subparser
+    directory_parser = subparsers.add_parser('directory', help='Perform Directory Fuzzing')
+    # Add Directory parameters here if needed
+
+    # Subdomain subparser
+    subdomain_parser = subparsers.add_parser('subdomain', help='Perform Subdomain Fuzzing')
+    # Add Subdomain parameters here if needed
     parser.add_argument('-T', '--target', type=str, help='Specify Target')
-    # Add mutually exclusive groups for specifying the method, user, and password
-    group_method = parser.add_mutually_exclusive_group(required=True)
-    group_method.add_argument('-H', '--http', action='store_true', help='Specify service as HTTP')
-    group_method.add_argument('-f', '--ftp', action='store_true', help='Specify service as FTP')
-    group_method.add_argument('-s', '--ssh', action='store_true', help='Specify service as SSH')
-    group_method.add_argument('-S', '--smb', action='store_true', help='Specify service as SMB')
-    group_method.add_argument('-M', '--mysql', action='store_true', help='Specify service as MySQL')
-    group_method.add_argument('-D', '--directory', action='store_true', help='Perform Directory Fuzzing')
-    group_method.add_argument('-F', '--subdomain', action='store_true', help='Perform Subdomain Fuzzing')
-
-    group_user = parser.add_mutually_exclusive_group(required=True)
-    group_user.add_argument('-u', '--user', type=str, help='Username')
-    group_user.add_argument('-U', '--userfile', type=argparse.FileType('r'), help='User file')
-
-    group_password = parser.add_mutually_exclusive_group(required=True)
-    group_password.add_argument('-p', '--password', type=str, help='Password')
-    group_password.add_argument('-P', '--passwordfile', type=argparse.FileType('r'), help='Password file')
 
     args = parser.parse_args()
 
-    if args.http:
+    if args.method == 'http':
         if args.user:
-            if args.password:
-                os.system('python ./FuzzHTTP.py -u {} -p {}'.format(args.user, args.password))
-            elif args.passwordfile:
-                os.system('python ./FuzzHTTP.py -u {} -P {}'.format(args.user, args.passwordfile.name))
+            if args.passwordfile:
+                os.system('python ./FuzzHTTP.py -u {} -P {} -t {} -userlabel {} -passlabel {} -e {}'.format(args.user, args.passwordfile.name, args.target, args.userlabel, args.passlabel, args.error))
             else:
                 os.system('python ./FuzzGuard.py -h')
-        
-        elif args.userfile:
-            if args.password:
-                os.system('python ./FuzzHTTP.py -U {} -p {}'.format(args.userfile.name, args.password))
-            elif args.passwordfile:
-                os.system('python ./FuzzHTTP.py -U {} -P {}'.format(args.userfile.name, args.passwordfile.name))
-            else:
-                os.system('python ./FuzzGuard.py -h')
-
         else:
-            os.system('python ./FuzzGuard.py -h')
+            if args.password:
+                os.system('python ./FuzzHTTP.py -U {} -p {} -t {}'.format(args.userfile.name, args.password, args.target))
+            elif args.passwordfile:
+                os.system('python ./FuzzHTTP.py -U {} -P {} -t {}'.format(args.userfile.name, args.passwordfile.name, args.target))
+            else:
+                os.system('python ./FuzzGuard.py -h')
 
-    if args.ftp:
-        os.system()
+    elif args.method == 'ftp':
+        pass
+        # Add FTP method handling here
 
-    if args.ssh:
-        os.system()
+    elif args.method == 'ssh':
+        print("ssh")
+        
 
-    if args.smb:
-        os.system()
+    elif args.method == 'smb':
+        pass
+        # Add SMB method handling here
 
-    if args.mysql:
-        os.system()
+    elif args.method == 'mysql':
+        pass
+        # Add MySQL method handling here
 
-    if args.directory:
+    elif args.method == 'directory':
         os.system('python ./FuzzDir.py -U {}'.format(args.target))
 
-    if args.subdomain:
+    else:
         os.system('python ./FuzzSubD.py -U {}'.format(args.target))
 
 if __name__ == '__main__':
