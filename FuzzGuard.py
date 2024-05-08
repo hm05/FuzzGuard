@@ -28,6 +28,13 @@ def main():
 
     # SSH subparser
     ssh_parser = subparsers.add_parser('ssh', help='Specify service as SSH')
+    ssh_parser.add_argument('-u','--user',type=str,required=False, help='Username')
+    ssh_parser.add_argument('-U','--userfile',type=argparse.FileType('r'), help='User file')
+    ssh_parser.add_argument('-P','--password',type=argparse.FileType('r'), help='Password')
+    ssh_parser.add_argument('-h','--host',type=str, help='Host')
+    ssh_parser.add_argument('-p','--port',default=22,type=int, help='Port')
+
+
     # Add SSH parameters here if needed
 
     # SMB subparser
@@ -68,7 +75,10 @@ def main():
         # Add FTP method handling here
 
     elif args.method == 'ssh':
-        print("ssh")
+        if args.user:
+            os.system('python ./FuzzSSH.py -u {} -P {} -h {} -p {}'.format(args.user, args.password.name, args.host, args.port))
+        else:
+            os.system('python ./FuzzSSH.py -U {} -P {} -h {} -p {}'.format(args.userfile.name, args.password.name, args.host, args.port))
         
 
     elif args.method == 'smb':
