@@ -2,7 +2,7 @@ import os
 import argparse
 import requests
 
-def http_bruteforce(target, ulabel, plabel, userfile, passfile,error, user=None, password=None):
+def http_bruteforce(target, ulabel, plabel, userfile, passfile, error, user=None, password=None):
 
     # If we already know the username then only fuzz for password
     try:
@@ -73,21 +73,6 @@ def main():
         passfile = args.passw
 
     http_bruteforce( args.target, args.userlabel, args.passlabel, userfile, passfile, args.error , args.user, args.passw)
- 
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
