@@ -8,7 +8,7 @@ parser.add_argument('-p','--password',type=str,required=False, help='Password')
 parser.add_argument('-U','--userfile',type=argparse.FileType('r'), help='User file')
 parser.add_argument('-P','--password',type=argparse.FileType('r'), help='Password')
 parser.add_argument('-h','--host',type=str, help='Host')
-parser.add_argument('-port','--port',type=int,default=22, help='Port')
+parser.add_argument('-port',type=int,default=22, help='Port')
 
 args = parser.parse_args()
 
