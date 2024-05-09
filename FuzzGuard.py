@@ -32,7 +32,7 @@ def main():
     ssh_parser.add_argument('-u','--user',type=str,required=False, help='Username')
     ssh_parser.add_argument('-U','--userfile',type=argparse.FileType('r'), help='User file')
     ssh_parser.add_argument('-P','--password',type=argparse.FileType('r'), help='Password')
-    ssh_parser.add_argument('-h','--host',type=, help='Host')
+    ssh_parser.add_argument('-h','--host',type=str, help='Host')
     ssh_parser.add_argument('-port',default=22,type=int, help='Port')
 
 
