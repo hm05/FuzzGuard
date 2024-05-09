@@ -77,9 +77,9 @@ def main():
 
     elif args.method == 'ssh':
         if args.user:
-            os.system('python ./FuzzSSH.py -u {} -P {} -host {} -port {}'.format(args.user, args.password.name, args.host, args.port))
+            os.system('python FuzzSSH.py -u {} -P {} -host {} -port {}'.format(args.user, args.password.name, args.host, args.port))
         else:
-            os.system('python ./FuzzSSH.py -U {} -P {} -host {} -port {}'.format(args.userfile.name, args.password.name, args.host, args.port))
+            os.system('python FuzzSSH.py -U {} -P {} -host {} -port {}'.format(args.userfile.name, args.password.name, args.host, args.port))
         
 
     elif args.method == 'smb':
