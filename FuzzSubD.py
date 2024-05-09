@@ -1,5 +1,5 @@
-import requests
 import argparse
+import requests
 
 def fuzz(target, file = './small.txt'):
     try:
