@@ -60,6 +60,7 @@ def ssh_bruteforce(host, port, userfile, passfile, user=None, password=None):
     except KeyboardInterrupt:
         print('\033[91m [-]\033[0m Detecting Keyboard Interrupt...Exiting...')
         exit(1)
+        
 def main():
     parser = argparse.ArgumentParser(description='SSH Bruteforce')
     parser.add_argument('-u','--user',type=str,required=False, help='Username')

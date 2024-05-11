@@ -1,3 +1,4 @@
+#!/usr/bin python3
 import os
 import argparse
 
@@ -24,6 +25,11 @@ def main():
     
     # FTP subparser
     ftp_parser = subparsers.add_parser('ftp', help='Specify service as FTP')
+    ftp_parser.add_argument('-u', '--user',required=False, type=str, help='Username')
+    ftp_parser.add_argument('-U', '--userfile', type=argparse.FileType('r'), help='User file')
+    ftp_parser.add_argument('-P', '--password', type=argparse.FileType('r'), help='Password file')
+    ftp_parser.add_argument('-host',type=str, help='Host')
+    ftp_parser.add_argument('-port',default=21,type=int, help='Port')
 
     # Add FTP parameters here if needed
 
@@ -72,14 +78,18 @@ def main():
                 os.system('python3 ./FuzzGuard.py -h')
 
     elif args.method == 'ftp':
-        pass
-        # Add FTP method handling here
+        if args.user:
+            os.system('python ./FuzzFTP.py -u {} -P {} -host {} -port {}'.format(args.user, args.password.name, args.host, args.port))
+        else:
+            os.system('python ./FuzzFTP.py -U {} -P {} -host {} -port {}'.format(args.userfile.name, args.password.name, args.host, args.port))
+
+
 
     elif args.method == 'ssh':
         if args.user:
-            os.system('python FuzzSSH.py -u {} -P {} -host {} -port {}'.format(args.user, args.password.name, args.host, args.port))
+            os.system('python ./FuzzSSH.py -u {} -P {} -host {} -port {}'.format(args.user, args.password.name, args.host, args.port))
         else:
-            os.system('python FuzzSSH.py -U {} -P {} -host {} -port {}'.format(args.userfile.name, args.password.name, args.host, args.port))
+            os.system('python ./FuzzSSH.py -U {} -P {} -host {} -port {}'.format(args.userfile.name, args.password.name, args.host, args.port))
         
 
     elif args.method == 'smb':
