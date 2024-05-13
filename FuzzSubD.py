@@ -34,7 +34,7 @@ def fuzz(target, file='./subdomains.txt'):
         with open(filename, 'r') as f:
             for word in f.readlines():
                 word = word.strip()
-                domain = f"https://{word}.{target}"
+                domain = f"{word}.{target}"
                 found = False  # Flag to determine if domain is found
                 try:
                     # Resolve the domain name to an IP address
