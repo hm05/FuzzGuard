@@ -61,8 +61,6 @@ if __name__ == '__main__':
     target_url = parser.add_mutually_exclusive_group(required=True)
     target_url.add_argument('-t', '--target', type=str, help='Target URl')
     parser.add_argument('-f', '--file', type=str, help='Fuzzing File')
-    # parser.add_argument('-d', '--delay', type=float, default=1, help='Delay between requests (seconds)')
-    # parser.add_argument('--ignore-ssl-errors', action='store_true', help='Ignore SSL errors (NOT recommended)')
     args = parser.parse_args()
 
     # Remove protocol and www from target before fuzzing
