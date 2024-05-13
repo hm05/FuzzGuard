@@ -8,14 +8,13 @@ def connectMySQL(host, user, password):
             user=user,
             password=password
         )
-        print("Connected to MySQL database successfully.")
-        print(f"Username : {user}, Password : {password}")
+        print(f'[\033[92m -\033[0m ] Username : {user}, Password : {password}')
         return mydb
     except mysql.connector.Error as err:
-        print(f"Failed to connect to MySQL database: {err}")
+        print(f'[\033[91m -\033[0m ] Failed to connect to MySQL database: {err}')
         return None
     except KeyboardInterrupt:
-        print('\033[91m [-]\033[0m Detecting Keyboard Interrupt...Exiting...')
+        print('[\033[91m -\033[0m ] Detecting Keyboard Interrupt...Exiting...')
         exit(1)
     
 if __name__ == '__main__':

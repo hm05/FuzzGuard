@@ -46,12 +46,12 @@ def fuzz(target, file='./subdomains.txt'):
 
                 # Print the domain along with whether it's found or not
                 if found:
-                    print(f"[\033[092m +\033[0m ] {domain} - Live")
+                    print(f"[\033[92m +\033[0m ] {domain}")
                 else:
-                    print(f"[\033[091m -\033[0m ] {domain} - Not Live")
+                    pass
                 
     except KeyboardInterrupt:
-        print('\033[91m [-]\033[0m Detecting Keyboard Interrupt...Exiting...')
+        print('[\033[91m -\033[0m ] Detecting Keyboard Interrupt...Exiting...')
         exit(1)
     except FileNotFoundError:
         print(f"Error: Wordlist file '{filename}' not found.")
