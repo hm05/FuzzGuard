@@ -14,7 +14,10 @@ def connectMySQL(host, user, password):
     except mysql.connector.Error as err:
         print(f"Failed to connect to MySQL database: {err}")
         return None
-
+    except KeyboardInterrupt:
+        print('\033[91m [-]\033[0m Detecting Keyboard Interrupt...Exiting...')
+        exit(1)
+    
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='MySQL Connector')
     user = parser.add_mutually_exclusive_group(required=True)
@@ -25,29 +28,32 @@ if __name__ == '__main__':
     password.add_argument('-P', '--passfile', type=argparse.FileType('r'), help='Password File')
     parser.add_argument('-H', '--host', type=str, help='Host')
     args = parser.parse_args()
-    if args.user:
-        if args.passwordfile:
-            mydb = mysql.connector.connect(
-              host=args.host,
-              user=args.user,
-              password=args.passwordfile.readline()
-            )
+    try:
+        if args.user:
+            if args.passwordfile:
+                mydb = mysql.connector.connect(
+                host=args.host,
+                user=args.user,
+                password=args.passwordfile.readline()
+                )
+            else:
+                mydb = mysql.connector.connect(
+                host=args.host,
+                user=args.user,
+                password=args.password
+                )
         else:
-            mydb = mysql.connector.connect(
-              host=args.host,
-              user=args.user,
-              password=args.password
-            )
-    else:
-        if args.password:
-            mydb = mysql.connector.connect(
-              host=args.host,
-              user=args.userfile.readline(),
-              password=args.password
-            )
-        elif args.passwordfile:
-            mydb = mysql.connector.connect(
-              host=args.host,
-              user=args.userfile.readline(),
-              password=args.passwordfile.readline()
-            )
+            if args.password:
+                mydb = mysql.connector.connect(
+                host=args.host,
+                user=args.userfile.readline(),
+                password=args.password
+                )
+            elif args.passwordfile:
+                mydb = mysql.connector.connect(
+                host=args.host,
+                user=args.userfile.readline(),
+                password=args.passwordfile.readline()
+                )
+    except FileNotFoundError:
+        print(f"Error: user or password file not found.")
