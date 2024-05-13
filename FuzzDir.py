@@ -19,7 +19,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Directory Fuzzing')
     target_url = parser.add_mutually_exclusive_group(required=True)
     target_url.add_argument('-t', '--target', type=str, help='Target URl')
-    target_url.add_argument('-f', '--file', type=str, help='Fuzzing File')
+    parser.add_argument('-f', '--file', type=str, help='Fuzzing File')
     args = parser.parse_args()
     
     if args.file == None:
