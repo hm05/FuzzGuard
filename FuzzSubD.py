@@ -46,12 +46,12 @@ def fuzz(target, file='./subdomains.txt'):
 
                 # Print the domain along with whether it's found or not
                 if found:
-                    print(f"[\033[92m +\033[0m ] {domain}")
+                    print(f"[\033[092m +\033[0m ] {domain}")
                 else:
                     pass
                 
     except KeyboardInterrupt:
-        print('[\033[91m -\033[0m ] Detecting Keyboard Interrupt...Exiting...')
+        print('\033[91m [-]\033[0m Detecting Keyboard Interrupt...Exiting...')
         exit(1)
     except FileNotFoundError:
         print(f"Error: Wordlist file '{filename}' not found.")
@@ -61,6 +61,8 @@ if __name__ == '__main__':
     target_url = parser.add_mutually_exclusive_group(required=True)
     target_url.add_argument('-t', '--target', type=str, help='Target URl')
     parser.add_argument('-f', '--file', type=str, help='Fuzzing File')
+    # parser.add_argument('-d', '--delay', type=float, default=1, help='Delay between requests (seconds)')
+    # parser.add_argument('--ignore-ssl-errors', action='store_true', help='Ignore SSL errors (NOT recommended)')
     args = parser.parse_args()
 
     # Remove protocol and www from target before fuzzing
