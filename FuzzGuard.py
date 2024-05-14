@@ -19,8 +19,8 @@ def main():
     http_parser.add_argument('-U', '--userfile', type=argparse.FileType('r'), help='User file')
     http_parser.add_argument('-p', '--password', required=False, type=str, help='Password')
     http_parser.add_argument('-P', '--passwordfile', type=argparse.FileType('r'), help='Password file')
-    http_parser.add_argument('-userlabel', type=str, help='User label for form')
-    http_parser.add_argument('-passlabel', type=str, help='Password label for form')
+    http_parser.add_argument('-userlabel',default="username", type=str, help='User label for form')
+    http_parser.add_argument('-passlabel',default="password", type=str, help='Password label for form')
     http_parser.add_argument('-e', '--error', type=str, help='Error message for invalid login attempt')
     
     # FTP subparser
@@ -46,6 +46,7 @@ def main():
 
     # SMB subparser
     smb_parser = subparsers.add_parser('smb', help='Specify service as SMB')
+    
     # Add SMB parameters here if needed
 
     # MySQL subparser

@@ -18,6 +18,20 @@ def http_bruteforce(target, ulabel, plabel, userfile, passfile, error, user=None
                 else:
                     print(f'\033[91m [-]\033[0m {user} : ', password)
 
+
+        elif password and userfile:
+            with open(userfile, 'r') as f:
+                username = f.readlines()
+            for user in username:
+                user = user.strip()
+                response = requests.post(target, data={ulabel:user, plabel:password})
+                print(response.text)
+                if response.status_code == 200 and error not in response.text:
+                    print(f'\033[92m [+]\033[0m {user} : ', password)
+                    break
+                else:
+                    print(f'\033[91m [-]\033[0m {user} : ', password)
+
         # If we don't know the username then fuzz for both username and password
         elif userfile and passfile:
             with open(userfile, 'r') as f:
@@ -29,8 +43,7 @@ def http_bruteforce(target, ulabel, plabel, userfile, passfile, error, user=None
                 for password in passwords:
                     password = password.strip()
                     response = requests.post(target, data={ulabel:user, plabel:password})
-                    print(response.status_code)
-                    print(response.headers)
+                    
                     if response.status_code == 200 and error not in response.text:
                         print(f'\033[92m [+]\033[0m {user} : ', password)
                         break
