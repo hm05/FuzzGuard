@@ -21,7 +21,7 @@ def main():
     http_parser.add_argument('-P', '--passwordfile', type=argparse.FileType('r'), help='Password file')
     http_parser.add_argument('-userlabel',default="username", type=str, help='User label for form')
     http_parser.add_argument('-passlabel',default="password", type=str, help='Password label for form')
-    http_parser.add_argument('-e', '--error', type=str, help='Error message for invalid login attempt')
+    http_parser.add_argument('--error', nargs='+', type=str, help='Error message for invalid login attempt')
     
     # FTP subparser
     ftp_parser = subparsers.add_parser('ftp', help='Specify service as FTP')
@@ -46,6 +46,16 @@ def main():
 
     # SMB subparser
     smb_parser = subparsers.add_parser('smb', help='Specify service as SMB')
+    smb_parser.add_argument('-port', default=445, type=int, help='Port')
+    smb_parser.add_argument('-s','--share',type=str,help='Name of SMB Share')
+
+    group_smb_pass = smb_parser.add_mutually_exclusive_group(required=True)
+    group_smb_pass.add_argument('-P', '--passwordfile', type=argparse.FileType('r'), help='Password file')
+    group_smb_pass.add_argument('-p', '--password', type=str, help='Password')
+
+    group_smb_user = smb_parser.add_mutually_exclusive_group(required=True)
+    group_smb_user.add_argument('-u', '--user', type=str, help='Username')
+    group_smb_user.add_argument('-U', '--userfile', type=argparse.FileType('r'), help='User file')
     
     # Add SMB parameters here if needed
 
@@ -72,9 +82,9 @@ def main():
                 os.system('python3 ./FuzzGuard.py -h')
         else:
             if args.password:
-                os.system('python3 ./FuzzHTTP.py -U {} -p {} -t {}'.format(args.userfile.name, args.password, args.target))
+                os.system('python3 ./FuzzHTTP.py -U {} -p {} -t {} --error {}'.format(args.userfile.name, args.password, args.target,args.error))
             elif args.passwordfile:
-                os.system('python3 ./FuzzHTTP.py -U {} -P {} -t {}'.format(args.userfile.name, args.passwordfile.name, args.target))
+                os.system('python3 ./FuzzHTTP.py -U {} -P {} -t {} --error {}'.format(args.userfile.name, args.passwordfile.name, args.target,args.error))
             else:
                 os.system('python3 ./FuzzGuard.py -h')
 
@@ -94,8 +104,18 @@ def main():
         
 
     elif args.method == 'smb':
-        pass
         # Add SMB method handling here
+        if args.user:
+            if args.passwordfile:
+                os.system('python3 ./FuzzSMB.py -u {} -P {} -T {} -port {}'.format(args.user, args.passwordfile.name, args.target, args.port))
+        elif args.userfile:
+            if args.password:
+                os.system('python3 ./FuzzSMB.py -U {} -p {} -T {} -port {}'.format(args.userfile.name, args.password, args.target, args.port))
+            else:
+                os.system('python3 ./FuzzSMB.py -U {} -P {} -T {} -port {}'.format(args.userfile.name, args.passwordfile.name, args.target, args.port))
+        else:
+            os.system('python3 ./FuzzGuard.py -h')
+
 
     elif args.method == 'mysql':
         pass
