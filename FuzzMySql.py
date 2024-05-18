@@ -1,23 +1,71 @@
 import argparse
 import mysql.connector
 
-def connectMySQL(host, user, password):
+def connectMySQL(host, user, password, userfile=None, passfile=None):
     try:
-        mydb = mysql.connector.connect(
-            host=host,
-            user=user,
-            password=password
-        )
-        print(f'[\033[92m + \033[0m] Successfully connected to MySQL database: {user}@{host}')
-        return mydb
-    except mysql.connector.Error as err:
-        print(f'[\033[91m - \033[0m] Failed to connect to MySQL database: {err}')
-        return None
+        if userfile and passfile:
+            with open (userfile, 'r') as userfile:
+                users =  userfile.readlines()
+
+            with open (passfile, 'r') as passfile:
+                passwords = passfile.readlines()
+
+            for user in users:
+                user = user.strip()
+                for password in passwords:
+                    password = password.strip()
+                    try:
+                        mydb = mysql.connector.connect(
+                            host=host,
+                            user=user,
+                            password=password
+                        )
+                        mydb.close()
+                        print(f'\033[92m [+]\033[0m {user} : ', password)
+                        break
+
+                    except mysql.connector.Error as err:
+                        print(f'\033[91m [-]\033[0m {user} : ', password)
+
+        elif user and passfile:
+            with open (passfile, 'r') as f:
+                passwords = f.readlines()
+            
+            for password in passwords:
+                try:
+                    mydb = mysql.connector.connect(
+                        host=host,
+                        user=user,
+                        password=password
+                    )
+                    mydb.close()
+                    print(f'[\033[92m + \033[0m] Successfully connected to MySQL database: {user}@{host}')
+
+                except mysql.connector.Error as err:
+                    print(f'\033[91m [-]\033[0m {user} : ', password)
+
+        elif password and userfile:
+            with open (userfile, 'r') as userfile:
+                users = userfile.readlines()
+
+            for user in users:
+                try:
+                    mydb = mysql.connector.connect(
+                        host=host,
+                        user=user,
+                        password=password
+                    )
+                    mydb.close()
+                    print(f'[\033[92m + \033[0m] Successfully connected to MySQL database: {user}@{host}')
+
+                except mysql.connector.Error as err:
+                    print(f'\033[91m [-]\033[0m {user} : ', password)
+
     except KeyboardInterrupt:
-        print('[\033[91m - \033[0m] Detecting Keyboard Interrupt...Exiting...')
+        print('\033[[91m - \033[0m] Detecting Keyboard Interrupt...Exiting...')
         exit(1)
-    
-if __name__ == '__main__':
+
+def main():
     parser = argparse.ArgumentParser(description='MySQL Connector')
     parser.add_argument('-u', '--user', type=str, help='Username')
     parser.add_argument('-U', '--userfile', type=argparse.FileType('r'), help='User File')
@@ -32,7 +80,26 @@ if __name__ == '__main__':
     if not args.password and not args.passfile:
         parser.error('Please provide a password or a file containing passwords.')
 
-    user = args.user if args.user else args.userfile.readline().strip()
-    password = args.password if args.password else args.passfile.readline().strip()
 
-    mydb = connectMySQL(args.host, user, password)
+    if args.userfile:
+        userfile = args.userfile.name
+    else:
+        userfile = None
+
+    if args.passfile:
+        passfile = args.passfile.name
+    else:
+        passfile = None
+
+    print(f'\033[0;34m [*] \033[0m MySQL Connector')
+    print(f'\033[0;34m [*] \033[0m Host: {args.host}')
+    print(f'\033[0;34m [*] \033[0m User: {args.user}')
+    print(f'\033[0;34m [*] \033[0m Password: {args.password}')
+    print(f'\033[0;34m [*] \033[0m User File: {userfile}')
+    print(f'\033[0;34m [*] \033[0m Password File: {passfile}')
+
+    connectMySQL(args.host, args.user, args.password, userfile, passfile)
+
+    
+if __name__ == '__main__':
+    main()
