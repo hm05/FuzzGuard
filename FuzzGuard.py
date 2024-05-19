@@ -61,7 +61,11 @@ def main():
 
     # MySQL subparser
     mysql_parser = subparsers.add_parser('mysql', help='Specify service as MySQL')
-    # Add MySQL parameters here if needed
+    mysql_parser.add_argument('-H', '--host', type=str, help='Host')
+    mysql_parser.add_argument('-u', '--user', type=str, help='Username')
+    mysql_parser.add_argument('-p', '--password', type=str, help='Password')
+    mysql_parser.add_argument('-U', '--userfile', type=argparse.FileType('r'), help='User File')
+    mysql_parser.add_argument('-P', '--passfile', type=argparse.FileType('r'), help='Password File')
 
     # Directory subparser
     directory_parser = subparsers.add_parser('directory', help='Perform Directory Fuzzing')
@@ -69,8 +73,8 @@ def main():
 
     # Subdomain subparser
     subdomain_parser = subparsers.add_parser('subdomain', help='Perform Subdomain Fuzzing')
-    # Add Subdomain parameters here if needed
-    parser.add_argument('-T', '--target', type=str, help='Specify Target')
+    subdomain_parser.add_argument('-T', '--target', type=str, help='Specify Target')
+    subdomain_parser.add_argument('-F', '--file', type=argparse.FileType('r'), help='Subdomain file')
 
     args = parser.parse_args()
 
@@ -124,8 +128,11 @@ def main():
     elif args.method == 'directory':
         os.system('python3 ./FuzzDir.py -U {}'.format(args.target))
 
-    else:
-        os.system('python3 ./FuzzSubD.py -U {}'.format(args.target))
+    elif args.method == 'subdomain':
+        if args.file:
+            os.system('python3 ./FuzzSubD.py -t {} -f {}'.format(args.target, args.file.name))
+        else:
+            os.system('python3 ./FuzzSubD.py -t {}'.format(args.target))
 
 if __name__ == '__main__':
     main()
