@@ -1,5 +1,3 @@
-import os
-import argparse
 import requests
 
 def http_bruteforce(target, ulabel, plabel, userfile, passfile, error, user=None, password=None):
@@ -23,8 +21,7 @@ def http_bruteforce(target, ulabel, plabel, userfile, passfile, error, user=None
 
 
         elif password and userfile:
-            # print(userfile)
-            # print(error)
+
             with open(userfile, 'r', encoding='latin-1') as f:
                 username = f.readlines()
                 
@@ -66,37 +63,3 @@ def http_bruteforce(target, ulabel, plabel, userfile, passfile, error, user=None
     except KeyboardInterrupt:
         print('\033[91m [-]\033[0m Detecting Keyboard Interrupt...Exiting...')
         exit(1)
-
-def main():
-    parser = argparse.ArgumentParser(description='HTTP Bruteforce')
-
-    parser.add_argument('-t','--target', type=str, help='Target URL')
-    parser.add_argument('--error', type=str, nargs='+', help='Error message for invalid login attempt')
-    parser.add_argument('-userlabel', type=str, help='User label')
-    parser.add_argument('-passlabel', type=str, help='Password label')
-
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument('-u', '--user', type=str, help='Username')
-    group.add_argument('-U', '--userfile', type=argparse.FileType('r'), help='User file')
-
-    group_p = parser.add_mutually_exclusive_group(required=True)
-    group_p.add_argument('-p', '--passw', type=str, help='Password')
-    group_p.add_argument('-P', '--passfile', type=argparse.FileType('r'), help='Password file')
-    args = parser.parse_args()
-
-    if args.userfile:
-        userfile = args.userfile.name
-    else:
-        userfile = None
-
-    if args.passfile:
-        passfile = args.passfile.name
-    else:
-        passfile = None
-
-    error = ' '.join(args.error)
-    error = error[1:-1]
-    http_bruteforce( args.target, args.userlabel, args.passlabel, userfile, passfile, error , args.user, args.passw)
-
-if __name__ == '__main__':
-    main()

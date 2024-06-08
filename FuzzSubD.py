@@ -35,20 +35,20 @@ def fuzz(target, file='./subdomains.txt'):
             for word in f.readlines():
                 word = word.strip()
                 domain = f"{word}.{target}"
-                found = False  # Flag to determine if domain is found
+
                 try:
                     # Resolve the domain name to an IP address
                     ip_address = socket.gethostbyname(domain)
                     if ip_address != None:
-                        found = True  # Set flag to true if domain is found
+                        print(f"[\033[92m +\033[0m ] {domain}")  # Set flag to true if domain is found
+
+                    else:
+                        print(f"[\033[91m -\033[0m ] {domain}")
                 except socket.gaierror:
-                    pass  # Ignore socket errors and continue with next word
+                    print("Socket error")  # Ignore socket errors and continue with next word
 
                 # Print the domain along with whether it's found or not
-                if found:
-                    print(f"[\033[92m +\033[0m ] {domain}")
-                else:
-                    pass
+                
                 
     except KeyboardInterrupt:
         print('[\033[91m -\033[0m ] Detecting Keyboard Interrupt...Exiting...')
@@ -56,13 +56,3 @@ def fuzz(target, file='./subdomains.txt'):
     except FileNotFoundError:
         print(f"Error: Wordlist file '{filename}' not found.")
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Directory Fuzzing')
-    target_url = parser.add_mutually_exclusive_group(required=True)
-    target_url.add_argument('-t', '--target', type=str, help='Target URl')
-    parser.add_argument('-f', '--file', type=str, help='Fuzzing File')
-    args = parser.parse_args()
-
-    # Remove protocol and www from target before fuzzing
-    target_without_protocol = filter_url(args.target)
-    fuzz(target_without_protocol, args.file)
